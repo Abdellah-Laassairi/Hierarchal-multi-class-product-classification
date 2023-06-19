@@ -1,0 +1,12 @@
+treelib
+pandas
+numpy
+graphviz
+pycaret
+umap-learn
+# apt-get install graphviz
+plotly
+pre-commit
+pytorch-lightning
+torcheval
+yaml
