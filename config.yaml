@@ -1,0 +1,101 @@
+seed_everything: true
+trainer:
+  checkpoint:
+    monitor: H_f1_macro_val
+    # dirpath: 'my/path/'
+    filename: smp_{epoch}_{H_f1_macro_val:.3f}
+    verbose: true
+    save_last: true
+    save_top_k: 1
+    save_weights_only: false
+    mode: max
+    every_n_epochs: 1
+    every_n_train_steps: null
+    train_time_interval: null
+    save_on_train_epoch_end: true
+  loggers: null
+  logger: true
+  enable_checkpointing: true
+  callbacks:
+  - class_path: lightning.pytorch.callbacks.LearningRateMonitor
+    init_args:
+      logging_interval: step
+      log_momentum: false
+  - class_path: lightning.pytorch.callbacks.RichProgressBar
+    init_args:
+      refresh_rate: 1
+      leave: false
+      theme:
+        description: white
+        progress_bar: '#6206E0'
+        progress_bar_finished: '#6206E0'
+        progress_bar_pulse: '#6206E0'
+        batch_progress: white
+        time: grey54
+        processing_speed: grey70
+        metrics: white
+      console_kwargs: null
+  gradient_clip_val: null
+  gradient_clip_algorithm: null
+  num_nodes: 1
+  # num_processes: null
+  devices:
+  - 0
+  # gpus: null
+  # auto_select_gpus: false
+  # tpu_cores: null
+  # ipus: null
+  enable_progress_bar: true
+  overfit_batches: 0.0
+  # track_grad_norm: -1
+  check_val_every_n_epoch: 1
+  fast_dev_run: false
+  # accumulate_grad_batches: null
+  max_epochs: 10000 
+  min_epochs: null
+  max_steps: -1
+  min_steps: null
+  max_time: null
+  limit_train_batches: null
+  limit_val_batches: null
+  limit_test_batches: null
+  limit_predict_batches: null
+  val_check_interval: null
+  log_every_n_steps: 5
+  accelerator: gpu
+  strategy: ddp
+  sync_batchnorm: false
+  precision: 32
+  enable_model_summary: true
+  num_sanity_val_steps: 5
+  profiler: simple
+  benchmark: true
+  deterministic: null
+  reload_dataloaders_every_n_epochs: 1
+
+model:
+  architecture: MLP 
+  strategy: STANDARD # STANDARD, BIGBANG
+  input_size: 128
+  num_target_classes_by_level: 
+    0: 101
+    1: 86
+    2: 58
+    3: 22
+  level_weights :
+    0: 1
+    1: 2
+    2: 3
+    3: 4
+  learning_rate: 0.001
+  threshold: 0.5
+data:
+  train_src_path: data/data_train.csv
+  test_src_path: data/data_test.csv
+  categories_path: data/category_parent.csv
+  batch_size: 10000
+  nworkers: 8
+  val_size: 0.2
+  seed: 42
+  verbose: true
+# ckpt_path: runs/checkpoints/smp_epoch=3979_f1_macro_0_val=0.638.ckpt
