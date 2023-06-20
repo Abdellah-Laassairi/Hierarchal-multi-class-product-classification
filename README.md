@@ -1,8 +1,8 @@
 # Hierarchal multi-class usecase : Product Classification
 On an e-commerce website, it is important to place the right products in the correct categories. When this is not the case, they may go unnoticed by buyers and can also lead to a poor user experience, especially if they are present in large quantities in the wrong category.
 
-Each e-commerce website has its own taxonomy of categories. Here is a dummy example for our dataset:
-![assets](assets/categories.png)
+Each e-commerce website has its own taxonomy of categories. Here is a dummy subtree example for our dataset:
+![assets](assets/subtree.png)
 
 A product can be described by various and diverse pieces of information. In the context of this study, the explanatory variables have already been transformed and reduced to a dimension of 128.
 
