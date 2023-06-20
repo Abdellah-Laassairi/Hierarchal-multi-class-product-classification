@@ -6,41 +6,9 @@ from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 from model.datamodule import *
 from model.model import *
 
-#  DONE
-# TODO : Look micro vs macro F1 etc : source https://datascience.stackexchange.com/questions/15989/micro-average-vs-macro-average-performance-in-a-multiclass-classification-settin
-# TODO : Add more metrics (precision, recall, AUC, ROC, etc) for both micro & micro
-# TODO : Add those metrics for each level
-# TODO : Construct a custom metric that takes into account the hiearchy ( mean of f1 across levels?)
-# TODO : https://towardsdatascience.com/https-medium-com-noa-weiss-the-hitchhikers-guide-to-hierarchical-classification-f8428ea1e076
-
-# NOT YET
-# TODO : Add precision-recall plots / AUC plot / confusion matrix plot etc
-# TODO : Add stage test
-# TODO : verify that test and train labels match
-
-# TODO : https://towardsdatascience.com/hierarchical-performance-metrics-and-where-to-find-them-7090aaa07183
-# TODO : Use more advanced model
-# TODO : N-binary implementation
-# TODO : Coherent Implementation (CHMC) see github
-# TODO : Personal implementation of TOP down approach
-
 
 class CustomTrainer(pl.Trainer):
     def __init__(self, *, checkpoint, **kwargs) -> None:
-        # # ! this is hard coded here, find a better way to do this
-        # self.tree = create_hiarchy_tree(categories_path="data/category_parent.csv")
-        # self.label_encoders = {}
-        # self.train_df = pd.read_csv("/home/alaassairi/internship/HC/data/data_train.csv")
-
-        # for level in range(self.tree.depth()+1) :
-        #     # Collapsing level
-        #     console.print(f"Collapsing categories - level : {level}")
-        #     self.train_df[f"category_id_level_{level}"] = self.train_df[f"category_id"].apply(lambda i : collapse_children(self.tree, i, level)  )
-
-        #     # Encoding the categories to match [0, n_classes-1]
-        #     self.label_encoders[level]=preprocessing.LabelEncoder()
-        #     self.label_encoders[level].fit(self.train_df[f"category_id_level_{level}"].values)
-
         kwargs.pop("loggers", None)  # Remove loggers
 
         directory = kwargs.get("default_root_dir", "runs")
