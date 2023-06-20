@@ -61,7 +61,9 @@ class HDataModule(pl.LightningDataModule):
 
             target_columns = []
             # Expanding the categories by level
-            for level in range(self.tree.depth() + 1):  # ! change this to tree.depth()
+            for level in range(
+                self.tree.depth() + 1
+            ):  # TODO: change this to tree.depth()
                 # Collapsing level
                 console.print(f"Collapsing categories - level : {level}")
                 self.train_df[f"category_id_level_{level}"] = self.train_df[
@@ -101,7 +103,7 @@ class HDataModule(pl.LightningDataModule):
 
                 target_columns.append(f"category_id_level_{level}")
 
-            # TODO Remove this hardcoded here after finishing
+            # TODO Remove this hardcoded block from here after finishing
             A = create_adjacency_matrix(
                 self.train_df[f"category_id_level_{0}"].values,
                 self.train_df[f"category_id_level_{1}"],
