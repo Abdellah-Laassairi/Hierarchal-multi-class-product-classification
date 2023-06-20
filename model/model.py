@@ -3,14 +3,7 @@ import torch
 import torch.nn.functional as F
 from efficientnet_pytorch import EfficientNet
 from lightning.pytorch.loggers import TensorBoardLogger
-from torchmetrics import (
-    AUROC,
-    Accuracy,
-    AveragePrecision,
-    FBetaScore,
-    Precision,
-    Recall,
-)
+from torchmetrics import Accuracy, FBetaScore, Precision, Recall
 
 from model.common import *
 from utils.rich import *
@@ -21,7 +14,7 @@ logger = TensorBoardLogger("tb_logs", name="HModel")
 class HModel(pl.LightningModule):
     def __init__(
         self,
-        architecture: str = "simple",
+        architecture: str = "simple",  # TODO : change those to literals
         strategy: str = "BIGBANG",  # TODO : change those to literals
         num_target_classes_by_level: dict = {0: 101, 1: 86, 2: 58, 3: 22},
         input_size: int = 128,
@@ -49,6 +42,7 @@ class HModel(pl.LightningModule):
 
         for level in range(len(self.num_target_classes_by_level)):
             self.metrics[level] = self.generate_metrics_for_level(level)
+
         console.print("[green] Finished generating metrics")
 
         # * Model Architecture
@@ -64,7 +58,7 @@ class HModel(pl.LightningModule):
                 torch.nn.Linear(128, 101),  # ! num_target_classes_by_level[0]
                 torch.nn.ReLU(),
             )
-        elif self.architecture == "RESNET":
+        elif self.architecture == "RESNET":  # TODO : add other architectures
             self.model = torch.hub.load(
                 "pytorch/vision", "resnet50", weights="IMAGENET1K_V2"
             )
@@ -92,6 +86,7 @@ class HModel(pl.LightningModule):
 
         # Classes Hierarchy Adjucency Matrices
 
+        # TODO : change path to Adjucency Matrices and added to config file
         # Load tensor A from disk
         self.A = torch.load("A.pt").type(torch.float16).to("cuda")
 
@@ -120,13 +115,13 @@ class HModel(pl.LightningModule):
     def step(self, batch):
         x, y = batch
 
-        # level 0 : f1_score, accuracy*1
+        # level 0 : f1_score, accuracy * 1
 
-        # level 1 : f1_score, accuracy*7
+        # level 1 : f1_score, accuracy * 7
 
-        # level 3 : f1_score, accurcy *10
+        # level 3 : f1_score, accuracy * 10
 
-        # HAccurcy = weighted_mean(accuracy)/n_levels
+        # HAccurcy = weighted_mean(accuracy)/sum(weights)
 
         # Model N for level N
 
@@ -231,7 +226,7 @@ class HModel(pl.LightningModule):
             max_lr=self.learning_rate,
             epochs=self.max_epochs,
             optimizer=optimizer,
-            steps_per_epoch=100,  # ! self.num_training_steps,
+            total_steps=self.trainer.estimated_stepping_batches,
             pct_start=0.1,
             div_factor=10,
             final_div_factor=100,
@@ -478,22 +473,3 @@ class HModel(pl.LightningModule):
             self.log(key, value, prog_bar=prog_par, sync_dist=syn_dist)
 
         return results
-
-    # ! Fix the num of training steps here
-    # @property
-    # def num_training_steps(self) -> int:
-    #     """Total training steps inferred from datamodule and devices."""
-    #     if self.trainer.max_steps != -1:
-    #         return self.trainer.max_steps
-
-    #     limit_batches = self.trainer.limit_train_batches
-    #     batches = len(self.trainer.train_dataloader())
-    #     batches = (min(batches, limit_batches) if isinstance(
-    #         limit_batches, int) else int(limit_batches * batches))
-
-    #     num_devices = max(1, self.trainer.num_gpus, self.trainer.num_processes)
-    #     if self.trainer.tpu_cores:
-    #         num_devices = max(num_devices, self.trainer.tpu_cores)
-
-    #     effective_accum = self.trainer.accumulate_grad_batches * num_devices
-    #     return (batches // effective_accum) * self.trainer.max_epochs
