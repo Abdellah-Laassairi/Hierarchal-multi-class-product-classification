@@ -7,6 +7,7 @@ umap-learn
 # apt-get install graphviz
 plotly
 pre-commit
-pytorch-lightning
+lightning
+scikit-learn
 torcheval
 yaml
